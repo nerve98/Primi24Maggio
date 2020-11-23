@@ -1,7 +1,5 @@
 import java.sql.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args){
@@ -10,19 +8,24 @@ public class Main {
         String numero= in.nextLine();
         char[] numeroChars=numero.toCharArray();
         int[] numeroDaAnalizzare=reverseConTraformazione(numeroChars);
-        Utils utils= new Utils();
-        utils.printTabelle();
+        UtilsV2 utils= new UtilsV2(numeroDaAnalizzare);
+        /*utils.printTabelle();
         System.out.println(Arrays.toString(numeroDaAnalizzare));
-        /*System.out.println(utils.fattoriSconosciuti(5));
+        System.out.println(utils.fattoriSconosciuti(5));
         System.out.println(utils.unFattoreSconosciutoUnoNo(5,3));
         System.out.println(utils.moltiplicazioneIncrociata(5,2,3));*/
-        System.out.println(utils.calcolaPrimi(numeroDaAnalizzare,2));
-        ArrayList<Integer> div1=new ArrayList<>(), div2=new ArrayList<>();
+
+            Map<String, List<Integer>> ris=utils.calcolaPrimi();
+            System.out.println(ris.get(UtilsV2.MASSIMO_DIVISORE));
+            System.out.println(ris.get(UtilsV2.MINIMO_DIVISORE));
+
+        //System.out.println(utils.calcolaPrimi(numeroDaAnalizzare,1));
+        /*ArrayList<Integer> div1=new ArrayList<>(), div2=new ArrayList<>();
         div1.add(3);
         div1.add(1);
         div2.add(3);
         div2.add(1);
-        System.out.println(utils.calcolaCifreRimanentiDivsUguali(numeroDaAnalizzare, 1, div1, div2 , 0));
+        System.out.println(utils.calcolaCifreRimanentiDivsUguali(numeroDaAnalizzare, 1, div1, div2 , 0));*/
 
     }
 

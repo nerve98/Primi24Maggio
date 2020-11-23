@@ -1,8 +1,8 @@
 public class ProdRip {
     int cifraProdotto;
-    long riporto;
+    int riporto;
 
-    public ProdRip(int cifraProdotto, long riporto) {
+    public ProdRip(int cifraProdotto, int  riporto) {
         this.cifraProdotto = cifraProdotto;
         this.riporto = riporto;
     }

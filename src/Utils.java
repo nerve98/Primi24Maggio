@@ -12,6 +12,10 @@ public class Utils {
 
     static Map<Integer, List<TabellaMoltiplicazione>> listaMoltiplicazione= new HashMap<>();
     static Map<Integer, List<TabellaAddizione>> listaAddizione= new HashMap<>();
+
+    private List<Integer> div1=new ArrayList<>();
+    private List<Integer> div2=new ArrayList<>();
+
     static{
         for(int i=0;i<10;i++) {
             listaMoltiplicazione.put(i, new ArrayList<>());
@@ -48,7 +52,7 @@ public class Utils {
 
     }
 
-
+    //per prima cifra
     public Map<String, List<Integer>> calcolaPrimi(int[] numeroDaAnalizzare, int lengthDivMin) {
         Map<String, List<Integer>> result=null;
         List<TabellaMoltiplicazione> possibiliUnita=fattoriSconosciuti(numeroDaAnalizzare[0]);
@@ -72,9 +76,10 @@ public class Utils {
         return result;
     }
 
+    //mezzo (stesso numero cifre divisore minimo e massimo)
     public Map<String, List<Integer>> calcolaDivisori(int[] numeroDaAnalizzare, int lengthDivMin, int index, List<Integer> div1, List<Integer> div2, long riporto) {
         Map<String, List<Integer>> result=null;
-        if(lengthDivMin>index) {
+        if(lengthDivMin>index) { //se sei ancora nel mezzo
             ProdRip prodRip = new ProdRip(0,0);
             if (index > 1) {
                 prodRip = calcolaProdottiConosciuti(div1, div2);
@@ -103,7 +108,7 @@ public class Utils {
             return result;
         }
         else {
-            if (index < numeroDaAnalizzare.length / 2) {
+            if (index < numeroDaAnalizzare.length / 2) {  //se il divosore massimo ha più cifre del divisore minimo
                 return completaDivMax(numeroDaAnalizzare, index, div1, div2, riporto);
             } else {
                 return calcolaCifreRimanentiDivsUguali(numeroDaAnalizzare, index, div1, div2, riporto);
@@ -111,6 +116,7 @@ public class Utils {
         }
     }
 
+    //per cifre maggiori sul divisore massimo
     private Map<String, List<Integer>> completaDivMax(int[] numeroDaAnalizzare, int index, List<Integer> div1, List<Integer> div2, long riporto) {
         int currentRip=(int) riporto%10;
         long nextRip=riporto/10;
@@ -160,12 +166,12 @@ public class Utils {
     }
 
 
-
+    //
     public Map<String, List<Integer>> calcolaCifreRimanentiDivsUguali(int[] numeroDaAnalizzare, int index, List<Integer> div1, List<Integer> div2, long riporto) {
         int currentRip=(int) riporto%10;
         long nextRip=riporto/10;
 
-        int k = 0;//1
+        int k = 1;//1
         for(int i=index;i<numeroDaAnalizzare.length;i++) {
             int cifraDaAnalizzare = numeroDaAnalizzare[i];
             ProdRip cifraCalcolata = calcolaCifra(currentRip, div1, div2, k);
@@ -249,11 +255,18 @@ public class Utils {
         }
     }
 
-
+    /*
+    Quando i fattori sono tutti sconosciuti
+    @return lista Fattori relative alla prima cifra da analizzare
+     */
     public List<TabellaMoltiplicazione> fattoriSconosciuti(int cifraDaAnalizzare){
         return listaMoltiplicazione.get(cifraDaAnalizzare);
     }
 
+    /*
+    Quando hai una cifra da analizzare e conosci solo una delle due cifre dei divisori
+    @return lista di fattori
+     */
     public List<TabellaMoltiplicazione> unFattoreSconosciutoUnoNo(int cifraDaAnalizzare, int fattoreConosciuto){
         List<TabellaMoltiplicazione> lista=new ArrayList<>();
         for(TabellaMoltiplicazione combinazione : listaMoltiplicazione.get(cifraDaAnalizzare)){
