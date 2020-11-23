@@ -41,7 +41,7 @@ public class UtilsV2 {
         for(int num:numeroDaAnalizzare) {
             numeroRev.add(num);
             blackListDivs.add(new HashSet<>());
-            divisori.add(new ArrayList<>());
+
         }
     }
 
@@ -49,7 +49,7 @@ public class UtilsV2 {
         int cifreTotDivs=numeroRev.size();
         int cifreDivMin=1;
         int cifreDivMax=cifreTotDivs-cifreDivMin;
-        while(cifreDivMin<cifreDivMax){
+        while(cifreDivMin<=cifreDivMax){
 
             if(calcolaDivisori(cifreDivMin, cifreDivMax)){
                 Map<String,List<Integer>> mappa= new HashMap<>();
@@ -66,9 +66,11 @@ public class UtilsV2 {
 
     private boolean calcolaDivisori(int cifreDivMin, int cifreDivMax) {
         int i=0;
-        int riporto=0, cifraToSubtract=0;
+        int riporto, cifraToSubtract;
         divisori.add(new ArrayList<>(fattoriSconosciuti(numeroRev.get(0))));
         while(divisori.get(0).size()>0) {
+            riporto=0;
+            cifraToSubtract=0;
             if(i==0) {
                 TabellaMoltiplicazione tab = divisori.get(0).get(0);
                 cifraToSubtract = tab.riporto;
@@ -76,17 +78,20 @@ public class UtilsV2 {
                 i++;
             }
             while (cifreDivMin >= i) {
+                if(i>1) {
+                    ProdRip prodRip = calcoloCifraUnFattoreSconosciuto();
+
+                    cifraToSubtract = prodRip.cifraProdotto;
+                    if (riporto > 0) {
+                        cifraToSubtract += riporto % 10;
+                        riporto = riporto / 10;
+                    }
+                    riporto += prodRip.riporto;
+                }
                 divisori.add(new ArrayList<>(moltiplicazioneIncrociata(numeroRev.get(i), div2.get(0), div1.get(0), cifraToSubtract, i)));
                 addToDivs(divisori.get(divisori.size() - 1).get(0));
                 i++;
-                ProdRip prodRip = calcoloCifraUnFattoreSconosciuto();
 
-                cifraToSubtract = prodRip.cifraProdotto;
-                if (riporto > 0) {
-                    cifraToSubtract += riporto % 10;
-                    riporto = riporto / 10;
-                }
-                riporto += prodRip.riporto;
             }
             while (cifreDivMax >= i) {
                 ProdRip pr = calcoloCifraUnFattoreSconosciuto();
@@ -104,6 +109,9 @@ public class UtilsV2 {
                 if (precontrolloRisFinale()) {
                     return true;
                 }
+            }
+            if(i>=numeroRev.size()){
+                i--;
             }
             i=rimozioneRicorsiva(i);
 
@@ -172,8 +180,17 @@ public class UtilsV2 {
             ultimecifreNum.add(cifra);
             rip=rip/10;
         }
+        if(ultimecifreNum.size()>numeroRev.size())
+            return false;
         List<Integer> lastCifre=numeroRev.subList(numeroRev.size()-ultimecifreNum.size(), numeroRev.size());
-        return lastCifre.equals(ultimecifreNum);
+        //return lastCifre.equals(ultimecifreNum);
+
+        for(int i=0;i<ultimecifreNum.size();i++){
+            if(!(ultimecifreNum.get(i).equals(lastCifre.get(i)))){
+                return false;
+            }
+        }
+        return true;
     }
 
     public ProdRip calcoloCifraUnFattoreSconosciuto() {
