@@ -16,8 +16,8 @@ public class Main {
         System.out.println(utils.moltiplicazioneIncrociata(5,2,3));*/
 
             Map<String, List<Integer>> ris=utils.calcolaPrimi();
-            System.out.println(ris.get(UtilsV2.MASSIMO_DIVISORE));
-            System.out.println(ris.get(UtilsV2.MINIMO_DIVISORE));
+            System.out.println(ris.get(UtilsV2.MASSIMO_DIVISORE).toString());
+            System.out.println(ris.get(UtilsV2.MINIMO_DIVISORE).toString());
 
         //System.out.println(utils.calcolaPrimi(numeroDaAnalizzare,1));
         /*ArrayList<Integer> div1=new ArrayList<>(), div2=new ArrayList<>();
