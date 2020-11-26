@@ -1,3 +1,4 @@
+import java.math.BigInteger;
 import java.sql.Array;
 import java.util.*;
 
@@ -6,18 +7,31 @@ public class Main {
         System.out.println("Inserisci un numero: ");
         Scanner in = new Scanner(System.in);
         String numero= in.nextLine();
-        char[] numeroChars=numero.toCharArray();
-        int[] numeroDaAnalizzare=reverseConTraformazione(numeroChars);
-        UtilsV2 utils= new UtilsV2(numeroDaAnalizzare);
+        //for(BigInteger num=BigInteger.TWO;num.compareTo(new BigInteger(numero))==-1;num=num.add(BigInteger.ONE)) {
+
+            System.out.println("Num analizzato: "+numero.toString());
+            char[] numeroChars = numero.toString().toCharArray();
+            int[] numeroDaAnalizzare = reverseConTraformazione(numeroChars);
+            UtilsV2 utils = new UtilsV2(numeroDaAnalizzare);
         /*utils.printTabelle();
         System.out.println(Arrays.toString(numeroDaAnalizzare));
         System.out.println(utils.fattoriSconosciuti(5));
         System.out.println(utils.unFattoreSconosciutoUnoNo(5,3));
         System.out.println(utils.moltiplicazioneIncrociata(5,2,3));*/
 
-            Map<String, List<Integer>> ris=utils.calcolaPrimi();
-            System.out.println(ris.get(UtilsV2.MASSIMO_DIVISORE).toString());
-            System.out.println(ris.get(UtilsV2.MINIMO_DIVISORE).toString());
+            Map<String, List<Integer>> ris = utils.calcolaPrimi();
+
+            if (ris != null) {
+                List<Integer> max = ris.get(UtilsV2.MASSIMO_DIVISORE);
+                List<Integer> min = ris.get(UtilsV2.MINIMO_DIVISORE);
+                Collections.reverse(max);
+                Collections.reverse(min);
+                System.out.println(max);
+                System.out.println(min);
+            } else {
+                System.out.println("Is prime");
+            }
+       // }
 
         //System.out.println(utils.calcolaPrimi(numeroDaAnalizzare,1));
         /*ArrayList<Integer> div1=new ArrayList<>(), div2=new ArrayList<>();

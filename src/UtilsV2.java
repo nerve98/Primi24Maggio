@@ -48,23 +48,23 @@ public class UtilsV2 {
     public Map<String, List<Integer>> calcolaPrimi(){
         int cifreTotDivs=numeroRev.size();
         int cifreDivMin=1;
-        int cifreDivMax=cifreTotDivs-cifreDivMin;
+        int cifreDivMax=cifreTotDivs-cifreDivMin+1;
         while(cifreDivMin<=cifreDivMax){
 
+            if(cifreDivMin<=(cifreDivMax-1) && calcolaDivisori(cifreDivMin, cifreDivMax-1)){
+                Map<String,List<Integer>> mappa= new HashMap<>();
+                mappa.put(MINIMO_DIVISORE,div1);
+                mappa.put(MASSIMO_DIVISORE,div2);
+                return mappa;
+            }
             if(calcolaDivisori(cifreDivMin, cifreDivMax)){
                 Map<String,List<Integer>> mappa= new HashMap<>();
                 mappa.put(MINIMO_DIVISORE,div1);
                 mappa.put(MASSIMO_DIVISORE,div2);
                 return mappa;
             }
-            if(calcolaDivisori(cifreDivMin, cifreDivMax+1)){
-                Map<String,List<Integer>> mappa= new HashMap<>();
-                mappa.put(MINIMO_DIVISORE,div1);
-                mappa.put(MASSIMO_DIVISORE,div2);
-                return mappa;
-            }
             cifreDivMin++;
-            cifreDivMax=cifreTotDivs-cifreDivMin;
+            cifreDivMax=cifreTotDivs-cifreDivMin+1;
         }
         return null;
     }
@@ -80,41 +80,57 @@ public class UtilsV2 {
             while (cifreDivMin -1> divisori.size()-1) {
                 ProdRip prodRip;
                 int cifraToSubtract=0;
-                if(divisori.size()-1>0) {
+               // if(divisori.size()-1>0) {
                     prodRip = calcoloCifraUnFattoreSconosciuto();
                     cifraToSubtract = prodRip.cifraProdotto;
-                }
+                //}
                 prodRip=sommaRiporti(cifraToSubtract,divisori.size());
                 cifraToSubtract=prodRip.cifraProdotto;
-                divisori.add(new ArrayList<>(moltiplicazioneIncrociata(numeroRev.get(divisori.size() - 1), div2.get(0), div1.get(0), cifraToSubtract, divisori.size() - 1)));
+
+                int realCifra=numeroRev.get(divisori.size())-cifraToSubtract;
+                if(realCifra<0){
+                    realCifra=Math.abs(realCifra);
+                    addRiporto(1,divisori.size()+1, divisori.size()-1);
+                }
+
+                divisori.add(new ArrayList<>(moltiplicazioneIncrociata(realCifra, div2.get(0), div1.get(0) )));
                 tab =divisori.get(divisori.size()-1).get(0);
                 addToDivs(tab);
                 addRiporto(tab.riporto+prodRip.riporto,divisori.size(), divisori.size()-1);
 
             }
+            if(cifreDivMax == div2.size() && div1.size()==div2.size() && cifreDivMax>1){
+                int pro=div1.get(div1.size()-1)*div2.get(div2.size()-1);
+                addRiporto(pro,divisori.size(), divisori.size()-1);
+            }
+            else{
+                while (cifreDivMax > div2.size()) {
+                    ProdRip pr = calcoloCifraUnFattoreSconosciuto();
 
+                    int cifraToSubtract = pr.cifraProdotto;
+                    pr = sommaRiporti(cifraToSubtract, divisori.size());
+                    cifraToSubtract = pr.cifraProdotto;
+                    //System.out.println("Cifra to subtract: " + cifraToSubtract);
 
-            while (cifreDivMax -1> divisori.size()-1) {
-                ProdRip pr = calcoloCifraUnFattoreSconosciuto();
+                    int realCifra=numeroRev.get(divisori.size())-cifraToSubtract;
+                    if(realCifra<0){
+                        realCifra=Math.abs(realCifra);
+                        addRiporto(1,divisori.size()+1, divisori.size()-1);
+                    }
 
-                int cifraToSubtract = pr.cifraProdotto;
-                pr=sommaRiporti(cifraToSubtract,divisori.size());
-                cifraToSubtract=pr.cifraProdotto;
-                System.out.println("Cifra to subtract: "+cifraToSubtract);
-                List tempList=new ArrayList<>(unFattoreSconosciutoUnoNo(numeroRev.get(divisori.size()-1), div1.get(0), cifraToSubtract));
-                if(tempList.size()>0){
-                    divisori.add(tempList);
-                    tab =divisori.get(divisori.size()-1).get(0);
-                    addToDivs(tab);
-                    addRiporto(tab.riporto+pr.riporto,divisori.size(), divisori.size()-1);
+                    List tempList = new ArrayList<>(unFattoreSconosciutoUnoNo(realCifra, div1.get(0)));
+                    if (tempList.size() > 0) {
+                        divisori.add(tempList);
+                        tab = divisori.get(divisori.size() - 1).get(0);
+                        addToDivs(tab);
+                        addRiporto(tab.riporto + pr.riporto, divisori.size(), divisori.size() - 1);
+                    } else {
+                       // System.out.println("Lista vuota");
+                        //printTabelle();
+                        rimozioneRicorsiva();
+                    }
+
                 }
-                else{
-                    System.out.println("Lista vuota");
-                    printTabelle();
-                    rimozioneRicorsiva();
-                }
-
-
 
             }
             if (verificaDivisore( divisori.size()-1)) {
@@ -177,6 +193,9 @@ public class UtilsV2 {
         int i=indexFrom;
         while((map=riporti.get(i))!=null){
             map.remove(who);
+            if(riporti.get(i).isEmpty()){
+                riporti.remove(i);
+            }
             i++;
         }
     }
@@ -192,7 +211,13 @@ public class UtilsV2 {
             sum=sum/10;
             map = riporti.get(index);
             if (map != null) {
-                map.put(who,cifra);
+                Integer value=map.get(who);
+                if(value!=null){
+                    map.put(who,cifra+value);
+                }
+                else {
+                    map.put(who, cifra);
+                }
             } else {
                 map = new HashMap<>();
                 map.put(who,cifra);
@@ -228,6 +253,11 @@ public class UtilsV2 {
         if(div1.size()==1 && div1.get(0)<2){
             return false;
         }
+        else{
+            if(div2.size()==1 && div2.get(0)<2){
+                return false;
+            }
+        }
         return true;
     }
 
@@ -255,8 +285,8 @@ public class UtilsV2 {
         for(int i=0;i<ultimeCifreNum.size();i++){
 
             if(!(ultimeCifreNum.get(i).equals(lastCifre.get(i)))){
-                System.out.println("Cifra calcolata: "+ultimeCifreNum.get(i));
-                System.out.println("Cifra da analizzare: "+lastCifre.get(i));
+               // System.out.println("Cifra calcolata: "+ultimeCifreNum.get(i));
+                //System.out.println("Cifra da analizzare: "+lastCifre.get(i));
                 return false;
             }
         }
@@ -297,10 +327,10 @@ public class UtilsV2 {
     Quando hai una cifra da analizzare e conosci solo una delle due cifre dei divisori
     @return lista di fattori
      */
-    public Set<TabellaMoltiplicazione> unFattoreSconosciutoUnoNo(int cifraDaAnalizzare, int fattoreConosciuto, int riporto)  {
-        Set<TabellaMoltiplicazione> lista=new HashSet<>();
-        int realCifra=Math.abs(cifraDaAnalizzare-riporto);
-        System.out.println("Realcifra: "+realCifra);
+    public List<TabellaMoltiplicazione> unFattoreSconosciutoUnoNo(int realCifra, int fattoreConosciuto)  {
+        List<TabellaMoltiplicazione> lista=new ArrayList<>();
+
+       // System.out.println("Realcifra: "+realCifra);
         for(TabellaMoltiplicazione combinazione : listaMoltiplicazione.get(realCifra)){
             if(combinazione.fattore1==fattoreConosciuto){
                 TabellaMoltiplicazione temp=new TabellaMoltiplicazione( combinazione.fattore1, combinazione.fattore2,combinazione.riporto);
@@ -319,6 +349,7 @@ public class UtilsV2 {
             if(combinazione.fattore1==fattoreConosciuto ){
                 lista.add(new ProdRip(combinazione.fattore2, combinazione.riporto));
             }
+            //da togliere l'else
             else{
                 if(combinazione.fattore2==fattoreConosciuto){
                     lista.add(new ProdRip(combinazione.fattore1, combinazione.riporto));
@@ -328,12 +359,12 @@ public class UtilsV2 {
         return lista;
     }
 
-    public List<TabellaMoltiplicazione> moltiplicazioneIncrociata(int cifraDaAnalizzare, int fattoreConosciutoDivMax, int fattoreConosciutoDivMin, int riportoUnita, int indexNumRev){
+    public List<TabellaMoltiplicazione> moltiplicazioneIncrociata(int cifraReal, int fattoreConosciutoDivMax, int fattoreConosciutoDivMin){
         List<TabellaMoltiplicazione> lista= new ArrayList<>();
-        int cifraReal=Math.abs(cifraDaAnalizzare-riportoUnita);
+
         List<TabellaAddizione> listaAddizioni=listaAddizione.get(cifraReal);
         for(TabellaAddizione combinazioneSomma: listaAddizioni){
-            lista.addAll(assegnaAllaMappa(combinazioneSomma.addendo1, combinazioneSomma.addendo2, fattoreConosciutoDivMax, fattoreConosciutoDivMin));
+            lista.addAll(assegnaAllaMappa(combinazioneSomma.addendo1, combinazioneSomma.addendo2, fattoreConosciutoDivMax, fattoreConosciutoDivMin, combinazioneSomma.riporto));
 
         }
 
@@ -342,7 +373,7 @@ public class UtilsV2 {
     }
 
 
-    public Set<TabellaMoltiplicazione> assegnaAllaMappa( int prodottoDivMax, int prodottoDivMin, int fattoreConosciutoDivMax, int fattoreConosciutoDivMin){
+    public Set<TabellaMoltiplicazione> assegnaAllaMappa( int prodottoDivMax, int prodottoDivMin, int fattoreConosciutoDivMax, int fattoreConosciutoDivMin, int sommaRip){
         Set<TabellaMoltiplicazione> lista= new HashSet<>();
         List<ProdRip> divisoreMinore=SconosciutoUnoNo(prodottoDivMin, fattoreConosciutoDivMin);
         List<ProdRip> divisoreMassimo=SconosciutoUnoNo(prodottoDivMax,fattoreConosciutoDivMax);
