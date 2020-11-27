@@ -89,7 +89,8 @@ public class UtilsV2 {
 
                 int realCifra=numeroRev.get(divisori.size())-cifraToSubtract;
                 if(realCifra<0){
-                    realCifra=Math.abs(realCifra);
+                    //realCifra=Math.abs(realCifra);
+                    realCifra=(numeroRev.get(divisori.size())+10)-cifraToSubtract;
                     addRiporto(1,divisori.size()+1, divisori.size()-1);
                 }
 
@@ -104,6 +105,7 @@ public class UtilsV2 {
                 addRiporto(pro,divisori.size(), divisori.size()-1);
             }
             else{
+
                 while (cifreDivMax > div2.size()) {
                     ProdRip pr = calcoloCifraUnFattoreSconosciuto();
 
@@ -114,7 +116,7 @@ public class UtilsV2 {
 
                     int realCifra=numeroRev.get(divisori.size())-cifraToSubtract;
                     if(realCifra<0){
-                        realCifra=Math.abs(realCifra);
+                        realCifra=(numeroRev.get(divisori.size())+10)-cifraToSubtract;
                         addRiporto(1,divisori.size()+1, divisori.size()-1);
                     }
 
@@ -124,11 +126,15 @@ public class UtilsV2 {
                         tab = divisori.get(divisori.size() - 1).get(0);
                         addToDivs(tab);
                         addRiporto(tab.riporto + pr.riporto, divisori.size(), divisori.size() - 1);
-                    } else {
-                       // System.out.println("Lista vuota");
+                    }
+                    else {
+                        break;
+                    }/*else {
+                       System.out.println("Lista vuota");
                         //printTabelle();
                         rimozioneRicorsiva();
-                    }
+                    }*/
+
 
                 }
 
@@ -168,7 +174,7 @@ public class UtilsV2 {
             index=divisori.size()-1;
             TabellaMoltiplicazione tab =divisori.get(index).get(0);
             addToDivs(tab);
-            addRiporto(tab.riporto,index+1, index);
+            addRiporto(tab.riporto,divisori.size(), divisori.size()-1);
         }
 
     }
@@ -332,7 +338,7 @@ public class UtilsV2 {
 
        // System.out.println("Realcifra: "+realCifra);
         for(TabellaMoltiplicazione combinazione : listaMoltiplicazione.get(realCifra)){
-            if(combinazione.fattore1==fattoreConosciuto){
+            if(combinazione.fattore1==fattoreConosciuto && combinazione.fattore2>0){
                 TabellaMoltiplicazione temp=new TabellaMoltiplicazione( combinazione.fattore1, combinazione.fattore2,combinazione.riporto);
                 temp.fattore1=null;
                 lista.add(temp);
@@ -379,7 +385,7 @@ public class UtilsV2 {
         List<ProdRip> divisoreMassimo=SconosciutoUnoNo(prodottoDivMax,fattoreConosciutoDivMax);
         for(int j=0;j<divisoreMinore.size();j++) {
             for (int i = 0; i < divisoreMassimo.size(); i++) {
-                lista.add(new TabellaMoltiplicazione(divisoreMinore.get(j).cifraProdotto, divisoreMassimo.get(i).cifraProdotto, divisoreMinore.get(j).riporto + divisoreMassimo.get(i).riporto));
+                lista.add(new TabellaMoltiplicazione(divisoreMinore.get(j).cifraProdotto, divisoreMassimo.get(i).cifraProdotto, divisoreMinore.get(j).riporto + divisoreMassimo.get(i).riporto+sommaRip));
             }
         }
         return lista;

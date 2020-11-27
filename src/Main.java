@@ -7,10 +7,10 @@ public class Main {
         System.out.println("Inserisci un numero: ");
         Scanner in = new Scanner(System.in);
         String numero= in.nextLine();
-        //for(BigInteger num=BigInteger.TWO;num.compareTo(new BigInteger(numero))==-1;num=num.add(BigInteger.ONE)) {
+        for(BigInteger num=new BigInteger("202");num.compareTo(new BigInteger(numero))<1;num=num.add(BigInteger.ONE)) {
 
-            System.out.println("Num analizzato: "+numero.toString());
-            char[] numeroChars = numero.toString().toCharArray();
+            System.out.println("Num analizzato: "+num.toString());
+            char[] numeroChars = num.toString().toCharArray();
             int[] numeroDaAnalizzare = reverseConTraformazione(numeroChars);
             UtilsV2 utils = new UtilsV2(numeroDaAnalizzare);
         /*utils.printTabelle();
@@ -20,8 +20,8 @@ public class Main {
         System.out.println(utils.moltiplicazioneIncrociata(5,2,3));*/
 
             Map<String, List<Integer>> ris = utils.calcolaPrimi();
-
-            if (ris != null) {
+            boolean res=calcolaPrimiTradizionale(Integer.parseInt(num.toString()));
+            if (ris != null && res==false) {
                 List<Integer> max = ris.get(UtilsV2.MASSIMO_DIVISORE);
                 List<Integer> min = ris.get(UtilsV2.MINIMO_DIVISORE);
                 Collections.reverse(max);
@@ -29,9 +29,23 @@ public class Main {
                 System.out.println(max);
                 System.out.println(min);
             } else {
-                System.out.println("Is prime");
+                if(ris==null && res==true){
+                    System.out.println( "Is prime");
+                }
+                else{
+                    System.out.println("discrepanza");
+                    if (ris != null) {
+                        List<Integer> max = ris.get(UtilsV2.MASSIMO_DIVISORE);
+                        List<Integer> min = ris.get(UtilsV2.MINIMO_DIVISORE);
+                        Collections.reverse(max);
+                        Collections.reverse(min);
+                        System.out.println(max);
+                        System.out.println(min);
+                    }
+                    break;
+                }
             }
-       // }
+        }
 
         //System.out.println(utils.calcolaPrimi(numeroDaAnalizzare,1));
         /*ArrayList<Integer> div1=new ArrayList<>(), div2=new ArrayList<>();
@@ -54,5 +68,13 @@ public class Main {
         return numeroDaAnalizzare;
     }
 
+    public static boolean calcolaPrimiTradizionale(int num){
 
+        for(int i=2;i<num;i++){
+            if(num%i==0){
+                return false;
+            }
+        }
+        return true;
+    }
 }
