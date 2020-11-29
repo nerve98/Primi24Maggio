@@ -251,24 +251,41 @@ public class UtilsV2 {
         int cifra;
         int index=indexFrom;
         Map<Integer, Integer> map;
-        while(sum>0) {
-            cifra=sum%10;
-            sum=sum/10;
+        if(sum>0) {
+            while (sum > 0) {
+                cifra = sum % 10;
+                sum = sum / 10;
+                map = riporti.get(index);
+                if (map != null) {
+                    Integer value = map.get(who);
+                    if (value != null) {
+                        map.put(who, cifra + value);
+                    } else {
+                        map.put(who, cifra);
+                    }
+                } else {
+                    map = new HashMap<>();
+                    map.put(who, cifra);
+                    riporti.put(index, map);
+                }
+                index++;
+            }
+        }
+        else{
+            cifra=0;
             map = riporti.get(index);
             if (map != null) {
-                Integer value=map.get(who);
-                if(value!=null){
-                    map.put(who,cifra+value);
-                }
-                else {
+                Integer value = map.get(who);
+                if (value != null) {
+                    map.put(who, cifra + value);
+                } else {
                     map.put(who, cifra);
                 }
             } else {
                 map = new HashMap<>();
-                map.put(who,cifra);
+                map.put(who, cifra);
                 riporti.put(index, map);
             }
-            index++;
         }
 
     }
@@ -324,10 +341,21 @@ public class UtilsV2 {
         List<Integer> lastCifre=numeroRev.subList(workingCifraIndex+1, numeroRev.size());
         //return lastCifre.equals(ultimecifreNum);
 
-        if(lastCifre.size()!=ultimeCifreNum.size())
-            return false;
+        if(lastCifre.size()!=ultimeCifreNum.size()) {
+            if (ultimeCifreNum.size() > lastCifre.size()) {
+                List<Integer> inPiu=ultimeCifreNum.subList(lastCifre.size(),ultimeCifreNum.size());
+                for(Integer c:inPiu){
+                    if(c!=0){
+                        return false;
+                    }
+                }
+            }
+            else{
+                return false;
+            }
+        }
 
-        for(int i=0;i<ultimeCifreNum.size();i++){
+        for(int i=0;i<lastCifre.size();i++){
 
             if(!(ultimeCifreNum.get(i).equals(lastCifre.get(i)))){
                // System.out.println("Cifra calcolata: "+ultimeCifreNum.get(i));
