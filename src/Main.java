@@ -7,7 +7,7 @@ public class Main {
         System.out.println("Inserisci un numero: ");
         Scanner in = new Scanner(System.in);
         String numero= in.nextLine();
-        for(BigInteger num=new BigInteger("202");num.compareTo(new BigInteger(numero))<1;num=num.add(BigInteger.ONE)) {
+        for(BigInteger num=new BigInteger("2");num.compareTo(new BigInteger(numero))<1;num=num.add(BigInteger.ONE)) {
 
             System.out.println("Num analizzato: "+num.toString());
             char[] numeroChars = num.toString().toCharArray();
@@ -28,6 +28,14 @@ public class Main {
                 Collections.reverse(min);
                 System.out.println(max);
                 System.out.println(min);
+                String minS="";
+                for(Integer cifra:min){
+                    minS+=cifra;
+                }
+                if(!(num.mod(new BigInteger(minS)).equals(BigInteger.ZERO))){
+                    System.out.println("divisori scorretti");
+                    break;
+                }
             } else {
                 if(ris==null && res==true){
                     System.out.println( "Is prime");
